@@ -107,7 +107,7 @@ class PerformanceTestPlugin : Plugin<Project> {
 
     private
     fun Project.registerForkPointDistributionTask() {
-        onNonMasterOrReleaseBranch {
+        whenNotOnMasterOrReleaseBranch {
             val buildForkPointDistribution = tasks.register("buildForkPointDistribution", BuildForkPointDistribution::class) {
                 dependsOn("determineForkPoint")
             }
@@ -136,11 +136,10 @@ class PerformanceTestPlugin : Plugin<Project> {
     }
 
     private
-    fun Project.onNonMasterOrReleaseBranch(action: (branchName: String) -> Unit) {
-        action("")
-//        stringPropertyOrNull(PropertyNames.branchName)
-//            ?.takeIf { it.isNotEmpty() && it != "master" && it != "release" }
-//            ?.let(action)
+    fun Project.whenNotOnMasterOrReleaseBranch(action: (branchName: String) -> Unit) {
+        stringPropertyOrNull(PropertyNames.branchName)
+            ?.takeIf { it.isNotEmpty() && it != "master" && it != "release" }
+            ?.let(action)
     }
 
     private
@@ -465,7 +464,7 @@ class PerformanceTestPlugin : Plugin<Project> {
                 this@apply.mustRunAfter(this)
             }
 
-            onNonMasterOrReleaseBranch {
+            whenNotOnMasterOrReleaseBranch {
                 this@apply.dependsOn("configurePerformanceTestBaseline")
             }
         }
