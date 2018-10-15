@@ -39,7 +39,12 @@ public class SingletonFileTree implements MinimalFileTree {
     }
 
     public void visit(FileVisitor visitor) {
-        visitor.visitFile(new DefaultFileVisitDetails(file, fileSystem, fileSystem));
+        visitor.visitFile(new DefaultFileVisitDetails(file, fileSystem, fileSystem) {
+            @Override
+            public String getName() {
+                return file.getName();
+            }
+        });
     }
 
     @Override

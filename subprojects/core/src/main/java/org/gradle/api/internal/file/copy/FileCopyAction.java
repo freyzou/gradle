@@ -15,6 +15,7 @@
  */
 package org.gradle.api.internal.file.copy;
 
+import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.file.CopyActionProcessingStreamAction;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
@@ -40,7 +41,13 @@ public class FileCopyAction implements CopyAction {
         private boolean didWork;
 
         public void processFile(FileCopyDetailsInternal details) {
-            File target = fileResolver.resolve(details.getRelativePath().getPathString());
+            RelativePath relativePath = details.getRelativePath();
+            File target;
+            if (relativePath.length() == 0) {
+                target = fileResolver.resolve(details.getFile());
+            } else {
+                target = fileResolver.resolve(relativePath.getPathString());
+            }
             boolean copied = details.copyTo(target);
             if (copied) {
                 didWork = true;

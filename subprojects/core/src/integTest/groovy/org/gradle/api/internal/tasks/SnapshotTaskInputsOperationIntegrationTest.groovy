@@ -150,6 +150,31 @@ class SnapshotTaskInputsOperationIntegrationTest extends AbstractIntegrationSpec
         !operations.hasOperation(SnapshotTaskInputsBuildOperationType)
     }
 
+    def "copy task with single file source is modelled as a root"() {
+        when:
+        buildScript """
+            task copy(type: Copy) {
+                from "in"
+                into "out" 
+            }
+        """
+
+        file("in") << "foo"
+        succeeds('copy', "--build-cache")
+
+        then:
+        def result = snapshotResults(":copy")
+        def inputFileProperties = result.inputFileProperties as Map<String, ?>
+        inputFileProperties.size() == 1
+        def source = inputFileProperties.values().first()
+        with(source) {
+            hash != null
+            roots.size() == 1
+            roots[0].path == file("in").absolutePath
+            normalization == "RELATIVE_PATH"
+        }
+    }
+
     def "handles invalid implementation classloader"() {
         given:
         buildScript """

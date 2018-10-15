@@ -47,7 +47,7 @@ public class DefaultFileVisitDetails extends DefaultFileTreeElement implements F
     }
 
     public DefaultFileVisitDetails(File file, Chmod chmod, Stat stat) {
-        this(file, new RelativePath(!file.isDirectory(), file.getName()), new AtomicBoolean(), chmod, stat);
+        this(file, new RelativePath(!file.isDirectory()), new AtomicBoolean(), chmod, stat);
     }
 
     @Override
